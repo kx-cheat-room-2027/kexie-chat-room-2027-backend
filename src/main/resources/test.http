@@ -3,7 +3,7 @@ POST http://localhost:8080/api/user/register
 Content-Type: application/json
 
 {
-  "account": "avatar_test",
+  "account": "test_user_001",
   "name": "头像测试用户",
   "password": "123456"
 }
@@ -14,7 +14,7 @@ Content-Type: application/json
 
 {
   "account": "avatar_test",
-  "password": "123456"
+  "password": "66666"
 }
 
 ### 3. 上传头像测试

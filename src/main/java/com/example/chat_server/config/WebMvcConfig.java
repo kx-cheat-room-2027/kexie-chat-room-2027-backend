@@ -1,5 +1,7 @@
 package com.example.chat_server.config;
 
+import com.example.chat_server.filter.AuthenticationTokenFilter;
+import jakarta.annotation.Resource;
 import org.springframework.boot.web.servlet.FilterRegistrationBean;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -32,5 +34,18 @@ public class WebMvcConfig implements WebMvcConfigurer {
         FilterRegistrationBean<CorsFilter> bean = new FilterRegistrationBean<>(new CorsFilter(source));
         bean.setOrder(0);
         return bean;
+    }
+
+    @Resource
+    private AuthenticationTokenFilter authenticationTokenFilter;
+
+    @Bean
+    public FilterRegistrationBean<AuthenticationTokenFilter> authenticationTokenFilterRegistrationBean() { // ✅ 换个名字
+        FilterRegistrationBean<AuthenticationTokenFilter> registration = new FilterRegistrationBean<>();
+        registration.setFilter(authenticationTokenFilter);
+        registration.addUrlPatterns("/*");
+        registration.setName("authenticationTokenFilter");
+        registration.setOrder(1);
+        return registration;
     }
 }
