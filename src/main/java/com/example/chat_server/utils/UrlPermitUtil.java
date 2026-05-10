@@ -13,10 +13,7 @@ public class UrlPermitUtil {
 
     {
         urls.add("/ws/**");
-        urls.add("/api/user/login");
-        urls.add("/api/user/register");
     }
-
 
     public boolean verifyUrl(String permitUrl, List<String> urlArr) {
         for (String url : urlArr) {
@@ -36,16 +33,7 @@ public class UrlPermitUtil {
     }
 
     public boolean isPermitUrl(String url) {
-        // 1. 精确匹配：只放行登录和注册
-        if (url.equals("/api/user/login") || url.equals("/api/user/register")) {
-            return true;
-        }
-        // 2. 前缀匹配：放行 WebSocket 相关路径
-        if (url.startsWith("/ws/")) {
-            return true;
-        }
-        // 3. 其他路径一律拦截
-        return false;
+        return verifyUrl(url, urls);
     }
 
 
