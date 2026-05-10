@@ -2,7 +2,9 @@ package com.example.chat_server.filter;
 
 import com.example.chat_server.utils.JwtUtil;
 import com.example.chat_server.utils.ResultUtil;
+import com.example.chat_server.utils.UrlPermitUtil;
 import io.jsonwebtoken.Claims;
+import jakarta.annotation.Resource;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
@@ -14,15 +16,16 @@ import org.springframework.web.filter.OncePerRequestFilter;
 import org.springframework.web.servlet.mvc.method.annotation.RequestMappingHandlerMapping;
 
 import java.io.IOException;
+import java.io.PrintWriter;
 import java.util.HashMap;
 import java.util.Map;
 
 @Component
 public class AuthenticationTokenFilter extends OncePerRequestFilter {
 
-    @Autowired
-    @Lazy
-    private RequestMappingHandlerMapping requestMappingHandlerMapping;
+    @Resource
+    private UrlPermitUtil urlPermitUtil;
+
 
     @Override
     protected void doFilterInternal(HttpServletRequest httpServletRequest, HttpServletResponse httpServletResponse, FilterChain filterChain) throws ServletException, IOException {
@@ -31,33 +34,28 @@ public class AuthenticationTokenFilter extends OncePerRequestFilter {
             return;
         }
 
-        // 检查是否为免认证接口
-        String requestURI = httpServletRequest.getRequestURI();
-        if (requestURI.contains("/api/user/login") ||
-                requestURI.contains("/api/user/register")) {
-            filterChain.doFilter(httpServletRequest, httpServletResponse);
-            return;
-        }
+        String token = httpServletRequest.getHeader("token");
+        String url = httpServletRequest.getRequestURI();
 
-        //todo 部分接口应该直接放行 未配置
-        String tokenName = "token";
-        String token = httpServletRequest.getHeader(tokenName);
-        Claims claims = null;
-        try {
-            claims = JwtUtil.parseToken(token);
-        } catch (Exception e) {
-            //todo 返回错误
-            httpServletResponse.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
-            httpServletResponse.setContentType("application/json;charset=UTF-8");
-            httpServletResponse.getWriter().write(ResultUtil.TokenInvalid().toString());
-            return;
-
+        // 验证url是否需要验证
+        if (!urlPermitUtil.isPermitUrl(url)) {
+            Claims claims = null;
+            try {
+                claims = JwtUtil.parseToken(token);
+            } catch (Exception e) {
+                httpServletResponse.setContentType("application/json;charset=UTF-8");
+                httpServletResponse.setStatus(HttpServletResponse.SC_FORBIDDEN);
+                PrintWriter out = httpServletResponse.getWriter();
+                out.write(ResultUtil.TokenInvalid().toJSONString(0));
+                out.flush();
+                out.close();
+                return;
+            }
+            // 设置用户信息
+            Map<String, Object> map = new HashMap<>();
+            claims.entrySet().stream().forEach(e -> map.put(e.getKey(), e.getValue()));
+            httpServletRequest.setAttribute("userinfo", map);
         }
-        // 设置用户信息
-        Map<String, Object> map = new HashMap<>();
-        claims.entrySet().stream().forEach(e -> map.put(e.getKey(), e.getValue()));
-        //验证角色是否有权限
-        httpServletRequest.setAttribute("userinfo", map);
         filterChain.doFilter(httpServletRequest, httpServletResponse);
     }
 

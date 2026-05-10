@@ -1,0 +1,21 @@
+# 完全缺失 MySQL 配置
+spring:
+  datasource:
+    url: jdbc:mysql://localhost:3306/ChatRoom?useSSL=false&serverTimezone=UTC&characterEncoding=utf8
+    username: root
+    password: 1234
+    driver-class-name: com.mysql.cj.jdbc.Driver
+
+server:
+  port: 8080
+minio:
+  access-key: minioadmin
+  secret-key: minioadmin
+  endpoint: http://localhost:9000
+  bucket: testminio
+  image-bucket: images
+  file-bucket: files
+knife4j:
+  setting:
+    language: zh_cn
+  enable: true

@@ -74,6 +74,7 @@ public class UserController {
         return ResultUtil.Succeed("注册成功", safeUser);
     }
 
+    @UrlFree
     @GetMapping("/{id}")
     public JSONObject getUserById(@PathVariable String id) {
         User user = userService.getUserById(id);

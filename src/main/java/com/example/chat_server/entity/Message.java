@@ -32,13 +32,6 @@ public class Message implements Serializable {
     private String fromId;
 
     /**
-     * 消息接受方id
-     */
-    @TableField("to_id")
-    private String toId;
-
-
-    /**
      * 消息内容
      */
     @TableField(value = "msg_content", typeHandler = JacksonTypeHandler.class)
