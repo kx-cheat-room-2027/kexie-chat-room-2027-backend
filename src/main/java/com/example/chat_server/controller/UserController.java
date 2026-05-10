@@ -59,20 +59,26 @@ public class UserController {
     @UrlFree
     @PostMapping("/register")
     public JSONObject register(@RequestBody User user) {
-        User registeredUser = userService.register(user);
-        // 创建不包含密码的安全用户对象
-        User safeUser = new User();
-        safeUser.setId(registeredUser.getId());
-        safeUser.setAccount(registeredUser.getAccount());
-        safeUser.setName(registeredUser.getName());
-        safeUser.setPortrait(registeredUser.getPortrait());
-        safeUser.setSex(registeredUser.getSex());
-        safeUser.setEmail(registeredUser.getEmail());
-        safeUser.setCreateTime(registeredUser.getCreateTime());
-        safeUser.setUpdateTime(registeredUser.getUpdateTime());
+        try {
+            User registeredUser = userService.register(user);
 
-        return ResultUtil.Succeed("注册成功", safeUser);
+            User safeUser = new User();
+            safeUser.setId(registeredUser.getId());
+            safeUser.setAccount(registeredUser.getAccount());
+            safeUser.setName(registeredUser.getName());
+            safeUser.setPortrait(registeredUser.getPortrait());
+            safeUser.setSex(registeredUser.getSex());
+            safeUser.setEmail(registeredUser.getEmail());
+            safeUser.setCreateTime(registeredUser.getCreateTime());
+            safeUser.setUpdateTime(registeredUser.getUpdateTime());
+
+            return ResultUtil.Succeed("注册成功", safeUser);
+        } catch (IllegalArgumentException e) {
+            // 捕获业务层抛出的异常（如账号已存在），直接返回给前端
+            return ResultUtil.Fail(e.getMessage());
+        }
     }
+
 
     @UrlFree
     @GetMapping("/{id}")
