@@ -95,6 +95,14 @@
             <artifactId>minio</artifactId>
             <version>8.5.10</version>
         </dependency>
+
+        <!--    websocket    -->
+        <dependency>
+            <groupId>io.netty</groupId>
+            <artifactId>netty-all</artifactId>
+            <version>4.1.97.Final</version>
+        </dependency>
+
         <!--    redis    -->
         <dependency>
             <groupId>redis.clients</groupId>
