@@ -1,9 +1,9 @@
 # 完全缺失 MySQL 配置
 spring:
   datasource:
-    url: jdbc:mysql://localhost:3306/ChatRoom?useSSL=false&serverTimezone=UTC&characterEncoding=utf8
+    url: jdbc:mysql://127.0.0.1:3306/chatRoom?useSSL=false&serverTimezone=UTC&characterEncoding=utf8
     username: root
-    password: 1234
+    password: root1234
     driver-class-name: com.mysql.cj.jdbc.Driver
 
 server:
