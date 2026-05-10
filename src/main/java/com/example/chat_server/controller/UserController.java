@@ -28,22 +28,28 @@ public class UserController {
         String account = params.get("account");
         String password = params.get("password");
 
-        //TODO：实现登录逻辑
         User user = userService.login(account,password);
         if(user != null){
-            //TODO:生成JWT Token
-            //创建存储用户信息的Map(除密码）
             Map<String, Object> claims = new HashMap<>();
             claims.put("userId", user.getId());
             claims.put("account", user.getAccount());
             claims.put("name", user.getName());
             claims.put("email", user.getEmail());
-            //生成Token
             String token = JwtUtil.createToken(claims);
-            //把token和用户的信息一起返回
+
+            User safeUser = new User();
+            safeUser.setId(user.getId());
+            safeUser.setAccount(user.getAccount());
+            safeUser.setName(user.getName());
+            safeUser.setPortrait(user.getPortrait());
+            safeUser.setSex(user.getSex());
+            safeUser.setEmail(user.getEmail());
+            safeUser.setCreateTime(user.getCreateTime());
+            safeUser.setUpdateTime(user.getUpdateTime());
+
             Map<String, Object> resultData = new HashMap<>();
             resultData.put("token", token);
-            resultData.put("user", user);
+            resultData.put("user", safeUser);
             return ResultUtil.Succeed("登录成功",resultData);
         }else{
             return ResultUtil.Fail("账号或密码错误");
@@ -54,7 +60,18 @@ public class UserController {
     @PostMapping("/register")
     public JSONObject register(@RequestBody User user) {
         User registeredUser = userService.register(user);
-        return ResultUtil.Succeed("注册成功",registeredUser);
+        // 创建不包含密码的安全用户对象
+        User safeUser = new User();
+        safeUser.setId(registeredUser.getId());
+        safeUser.setAccount(registeredUser.getAccount());
+        safeUser.setName(registeredUser.getName());
+        safeUser.setPortrait(registeredUser.getPortrait());
+        safeUser.setSex(registeredUser.getSex());
+        safeUser.setEmail(registeredUser.getEmail());
+        safeUser.setCreateTime(registeredUser.getCreateTime());
+        safeUser.setUpdateTime(registeredUser.getUpdateTime());
+
+        return ResultUtil.Succeed("注册成功", safeUser);
     }
 
     @UrlFree
