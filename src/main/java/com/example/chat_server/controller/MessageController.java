@@ -28,8 +28,8 @@ public class MessageController {
     @PostMapping("/send")
     public JSONObject sendMessage(
             @Userid String fromId,
-            @RequestParam String type,
-            @RequestParam(required = false, defaultValue = "") String content) {
+            @RequestBody String type,
+            @RequestBody String content) {
 
         Message message = messageService.sendMessage(fromId, type, content);
 
