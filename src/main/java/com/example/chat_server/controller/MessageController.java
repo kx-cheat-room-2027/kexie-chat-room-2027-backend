@@ -2,6 +2,7 @@ package com.example.chat_server.controller;
 
 import cn.hutool.json.JSONObject;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
+import com.example.chat_server.DTO.MsgContentDTO;
 import com.example.chat_server.annotation.Userid;
 import com.example.chat_server.entity.Message;
 import com.example.chat_server.service.MessageService;
@@ -21,17 +22,16 @@ public class MessageController {
      * 发送消息（第一步）
      *
      * @param fromId 发送方ID
-     * @param type 消息类型（text/image/file）
-     * @param content 消息内容
+     * @param msgContentDTO 消息内容
      * @return message
      */
     @PostMapping("/send")
     public JSONObject sendMessage(
             @Userid String fromId,
-            @RequestBody String type,
-            @RequestBody String content) {
+            @RequestBody MsgContentDTO msgContentDTO) {
 
-        Message message = messageService.sendMessage(fromId, type, content);
+        Message message = messageService
+                .sendMessage(fromId, msgContentDTO.getType(), msgContentDTO.getContent());
 
         JSONObject result = ResultUtil.Succeed();
         result.set("data", message);
