@@ -5,10 +5,13 @@ import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.example.chat_server.config.MinioConfig;
 import com.example.chat_server.entity.Message;
 import com.example.chat_server.entity.MsgContent;
+import com.example.chat_server.entity.User;
 import com.example.chat_server.exception.BaseException;
 import com.example.chat_server.mapper.MessageMapper;
 import com.example.chat_server.service.MessageService;
 import com.example.chat_server.service.MinioService;
+import com.example.chat_server.service.UserService;
+import jakarta.annotation.Resource;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -22,6 +25,9 @@ public class MessageServiceImpl extends ServiceImpl<MessageMapper, Message> impl
 
     @Autowired
     private MessageMapper messageMapper;
+
+    @Resource
+    private UserService userService;
     
     @Autowired
     private MinioService minioService;
@@ -34,11 +40,13 @@ public class MessageServiceImpl extends ServiceImpl<MessageMapper, Message> impl
     public Message sendMessage(String fromId , String type, String content) {
 
         //封装消息内容
-        //TODO 发送方头像,昵称根据formId查询填充到msgContent中
+        User user = userService.getUserById(fromId);
         MsgContent msgContent = MsgContent.builder()
                 .fromUserId(fromId)//发送方ID
                 .type(type)//消息类型
                 .content(content)//消息内容,如果是文件消息,则content为文件名
+                .formUserName(user.getName())
+                .formUserPortrait(user.getPortrait())
                 .build();
 
         Message message = new Message();
