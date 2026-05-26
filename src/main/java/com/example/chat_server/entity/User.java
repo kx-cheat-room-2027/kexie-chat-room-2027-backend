@@ -10,7 +10,7 @@ import java.time.LocalDateTime;
 @Data
 @TableName("user")
 public class User {
-    @TableId(value = "id", type = IdType.AUTO)
+    @TableId(value = "id", type = IdType.INPUT)
     private String id;
 
     @TableField("account")

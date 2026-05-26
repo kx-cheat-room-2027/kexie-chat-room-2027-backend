@@ -1,4 +1,4 @@
-# 完全缺失 MySQL 配置
+
 spring:
   datasource:
     url: jdbc:mysql://127.0.0.1:3306/chatRoom?useSSL=false&serverTimezone=UTC&characterEncoding=utf8
