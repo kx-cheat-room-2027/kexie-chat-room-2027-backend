@@ -7,6 +7,8 @@ import com.example.chat_server.annotation.Userid;
 import com.example.chat_server.entity.Message;
 import com.example.chat_server.service.MessageService;
 import com.example.chat_server.utils.ResultUtil;
+import com.example.chat_server.websocket.WebSocketService;
+import jakarta.annotation.Resource;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
@@ -17,6 +19,9 @@ public class MessageController {
 
     @Autowired
     private MessageService messageService;
+
+    @Resource
+    private WebSocketService webSocketService;
 
     /**
      * 发送消息（第一步）
@@ -35,6 +40,7 @@ public class MessageController {
 
         JSONObject result = ResultUtil.Succeed();
         result.set("data", message);
+        webSocketService.sendAll(fromId,message, WebSocketService.Msg);
         return result;
     }
 
