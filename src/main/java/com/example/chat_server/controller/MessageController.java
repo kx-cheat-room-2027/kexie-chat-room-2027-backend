@@ -5,6 +5,7 @@ import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.example.chat_server.DTO.MsgContentDTO;
 import com.example.chat_server.annotation.Userid;
 import com.example.chat_server.entity.Message;
+import com.example.chat_server.entity.User;
 import com.example.chat_server.service.MessageService;
 import com.example.chat_server.utils.ResultUtil;
 import com.example.chat_server.websocket.WebSocketService;
@@ -36,7 +37,7 @@ public class MessageController {
             @RequestBody MsgContentDTO msgContentDTO) {
 
         Message message = messageService
-                .sendMessage(fromId, msgContentDTO.getType(), msgContentDTO.getContent());
+                .sendMessage(fromId,msgContentDTO.getToId() ,msgContentDTO.getType(), msgContentDTO.getContent());
 
         JSONObject result = ResultUtil.Succeed();
         result.set("data", message);
@@ -93,9 +94,11 @@ public class MessageController {
      */
     @GetMapping("/list/asc")
     public JSONObject getMessageListAsc(
+            @Userid String userId,
+            @RequestParam String toUserId,
             @RequestParam(defaultValue = "1") int pageNum,
             @RequestParam(defaultValue = "10") int pageSize) {
-        Page<Message> page = messageService.getMessageListAsc(pageNum, pageSize);
+        Page<Message> page = messageService.getMessageListAsc(userId,toUserId,pageNum, pageSize);
         return ResultUtil.Succeed(page);
     }
 
@@ -107,9 +110,11 @@ public class MessageController {
      */
     @GetMapping("/list/desc")
     public JSONObject getMessageListDesc(
+            @Userid String userId,
+            @RequestParam String toUserId,
             @RequestParam(defaultValue = "1") int pageNum,
             @RequestParam(defaultValue = "10") int pageSize) {
-        Page<Message> page = messageService.getMessageListDesc(pageNum, pageSize);
+        Page<Message> page = messageService.getMessageListDesc(userId,toUserId,pageNum, pageSize);
         return ResultUtil.Succeed(page);
     }
 }

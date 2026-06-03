@@ -15,7 +15,7 @@ public interface MessageService extends IService<Message> {
      * @param content 消息内容
      * @return 消息ID
      */
-    Message sendMessage(String fromId , String type, String content);
+    Message sendMessage(String fromId ,String toId, String type, String content);
 
     /**
      * 根据消息ID上传文件到MinIO（第二步）
@@ -36,7 +36,7 @@ public interface MessageService extends IService<Message> {
      * @param pageSize 每页数量
      * @return 消息列表
      */
-    Page<Message> getMessageListAsc(int pageNum, int pageSize);
+    Page<Message> getMessageListAsc(String userId,String toUserId,int pageNum, int pageSize);
 
     /**
      * 获取消息列表（倒序）
@@ -45,7 +45,7 @@ public interface MessageService extends IService<Message> {
      * @param pageSize 每页数量
      * @return 消息列表
      */
-    Page<Message> getMessageListDesc(int pageNum, int pageSize);
+    Page<Message> getMessageListDesc(String userId,String toUserId,int pageNum, int pageSize);
 
     String getFileUrl(String minioName) throws Exception;
 }
