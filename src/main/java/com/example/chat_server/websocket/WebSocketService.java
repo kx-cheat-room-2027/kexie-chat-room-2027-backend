@@ -33,6 +33,8 @@ public class WebSocketService {
     //上线
     public static String Online = "online";
 
+    public static String offline = "offline";
+
     //核心数据结构（在线用户存储）
     public static final ConcurrentHashMap<String, Channel> Online_User = new ConcurrentHashMap<>();
     public static final ConcurrentHashMap<Channel, String> Online_Channel = new ConcurrentHashMap<>();
@@ -60,6 +62,9 @@ public class WebSocketService {
         if (StrUtil.isNotBlank(userId)) { //移除
             Online_User.remove(userId);
             Online_Channel.remove(channel);
+            //通知全体
+            User user = userService.getUserById(userId);
+            sendAll(userId,user,offline);
         }
     }
 

@@ -5,6 +5,7 @@ create table chatroom.message
     id           varchar(64)      not null
         primary key,
     from_id      varchar(64)      not null comment '消息发送方id',
+    to_id         VARCHAR(20) NOT NULL COMMENT '接收方用户id',
     is_show_time bit default b'0' null comment '是否显示时间',
     msg_content  text             null comment '消息内容',
     create_time  timestamp(3)     not null comment '创建时间',

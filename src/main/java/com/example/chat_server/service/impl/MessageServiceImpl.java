@@ -37,7 +37,7 @@ public class MessageServiceImpl extends ServiceImpl<MessageMapper, Message> impl
     //发送消息
     @Override
     @Transactional
-    public Message sendMessage(String fromId , String type, String content) {
+    public Message sendMessage(String fromId ,String toId, String type, String content) {
 
         //封装消息内容
         User user = userService.getUserById(fromId);
@@ -51,6 +51,7 @@ public class MessageServiceImpl extends ServiceImpl<MessageMapper, Message> impl
 
         Message message = new Message();
         message.setFromId(fromId);
+        message.setToId(toId);
         message.setMsgContent(msgContent);
         message.setIsShowTime(true);
         //TODO 时间填充createTime , updateTime
@@ -95,15 +96,45 @@ public class MessageServiceImpl extends ServiceImpl<MessageMapper, Message> impl
 
 
     @Override
-    public Page<Message> getMessageListAsc(int pageNum, int pageSize) {
+    public Page<Message> getMessageListAsc(String userId,String toUserId,int pageNum, int pageSize) {
+        // 群聊：只匹配 toUserId
+        if ("0".equals(toUserId)) {
+            return this.lambdaQuery()
+                    .eq(Message::getToId, toUserId)
+                    .orderByAsc(Message::getCreateTime)
+                    .page(new Page<>(pageNum, pageSize));
+        }
+
         return this.lambdaQuery()
+                .and(wrapper -> wrapper
+                        .eq(Message::getFromId, userId)
+                        .eq(Message::getToId, toUserId)
+                        .or()
+                        .eq(Message::getFromId, toUserId)
+                        .eq(Message::getToId, userId)
+                )
                 .orderByAsc(Message::getCreateTime)
                 .page(new Page<>(pageNum, pageSize));
     }
 
     @Override
-    public Page<Message> getMessageListDesc(int pageNum, int pageSize) {
+    public Page<Message> getMessageListDesc(String userId,String toUserId,int pageNum, int pageSize) {
+        // 群聊：只匹配 toUserId
+        if ("0".equals(toUserId)) {
+            return this.lambdaQuery()
+                    .eq(Message::getToId, toUserId)
+                    .orderByDesc(Message::getCreateTime)
+                    .page(new Page<>(pageNum, pageSize));
+        }
+
         return this.lambdaQuery()
+                .and(wrapper -> wrapper
+                        .eq(Message::getFromId, userId)
+                        .eq(Message::getToId, toUserId)
+                        .or()
+                        .eq(Message::getFromId, toUserId)
+                        .eq(Message::getToId, userId)
+                )
                 .orderByDesc(Message::getCreateTime)
                 .page(new Page<>(pageNum, pageSize));
     }
